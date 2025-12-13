@@ -1,81 +1,68 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+"use client"
+// components/QrScanner.js
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-export default function Home() {
-  const [text, setText] = useState("");
-  const [list, setList] = useState<any>({ qrs: [], scans: [] });
-  const [decoded, setDecoded] = useState("");
+// Dynamically import the Scanner component with ssr: false
+const Scanner = dynamic(
+  () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
+  {
+    ssr: false, // This is CRITICAL for camera-based components in Next.js
+  }
+);
 
-const Scanner = dynamic(() => import("@/app/components/scanner"), { ssr: false });
+function QrScannerComponent() {
+  const [scannedResult, setScannedResult] = useState('No result scanned yet');
+  const [isScanning, setIsScanning] = useState(true);
 
-  useEffect(() => {
-    fetchList();
-  }, []);
-
-  const fetchList = async () => {
-    const res = await fetch("/api/list");
-    const data = await res.json();
-    setList(data);
+  const handleScan = (result: string | any[]) => {
+    if (result && result.length > 0) {
+      // The result is an array of detected codes. We take the text from the first one.
+      const decodedText = result[0].rawValue;
+      setScannedResult(decodedText);
+      setIsScanning(false); // Optionally stop scanning after a successful read
+    }
   };
 
-  const createQr = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch("/api/qrcode", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text })
-    });
-    await res.json();
-    setText("");
-    fetchList();
-  };
-
-  const handleScan = async (t: string) => {
-    setDecoded(t);
-    await fetch("/api/scan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ decodedText: t })
-    });
-    fetchList();
-  };
+  // const handleError = (error: { message: any; }) => {
+  //   console.error('QR Scanner Error:', error);
+  //   // You can set a user-friendly error message here
+  //   setScannedResult(`Error: ${error.message || 'Camera access failed.'}`);
+  // };
 
   return (
-    <div style={{ maxWidth: 900, margin: "24px auto", padding: 12 }}>
-      <h1>QR Generator + Scanner (Next.js + TypeScript + MongoDB)</h1>
+    <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
+      <h2>QR Code Scanner</h2>
 
-      <h2>Create QR</h2>
-      <form onSubmit={createQr} style={{ display: "flex", gap: 8 }}>
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Enter text"
-          style={{ flex: 1, padding: 8 }}
-        />
-        <button type="submit">Create</button>
-      </form>
+      {isScanning && (
+        <div style={{ border: '2px solid #333', borderRadius: '8px', overflow: 'hidden' }}>
+          {/* The Scanner component is rendered here (client-side only) */}
+          <Scanner
+            onScan={handleScan}
+ 
+            constraints={{ facingMode: 'environment' }} // Use rear camera
+            allowMultiple={false} // Only scan one code at a time
+          />
+        </div>
+      )}
 
-      <h2 style={{ marginTop: 24 }}>Scan QR</h2>
-      <Scanner onDecoded={handleScan} />
-      {decoded && <p>Last decoded: {decoded}</p>}
+      <p style={{ marginTop: '20px', fontSize: '1.1em', fontWeight: 'bold' }}>
+        Scanned Result: <span style={{ color: scannedResult.startsWith('No') ? '#888' : 'green' }}>{scannedResult}</span>
+      </p>
 
-      <h2 style={{ marginTop: 24 }}>Saved QR Codes</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-        {list.qrs.map((q: any) => (
-          <div key={q._id} style={{ width: 150 }}>
-            <img src={q.dataUrl} style={{ width: "100%" }} />
-            <p>{q.text}</p>
-          </div>
-        ))}
-      </div>
-
-      <h2 style={{ marginTop: 24 }}>Scan History</h2>
-      <ul>
-        {list.scans.map((s: any) => (
-          <li key={s._id}>{s.decodedText}</li>
-        ))}
-      </ul>
+      {!isScanning && (
+        <button 
+          onClick={() => {
+            setScannedResult('Scanning...');
+            setIsScanning(true);
+          }}
+          style={{ padding: '10px 20px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Scan Another QR Code
+        </button>
+      )}
     </div>
   );
 }
+
+export default QrScannerComponent;
