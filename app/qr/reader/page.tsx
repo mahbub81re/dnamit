@@ -14,7 +14,9 @@ function QrScannerComponent() {
 
   const handleScan = async (result: any[]) => {
     if (result && result.length > 0 && !loading) {
-      const teacherId = result[0].rawValue; // ধরে নিচ্ছি QR কোডে ইউজারের ID আছে
+      const teacherlink = result[0].rawValue; // ধরে নিচ্ছি QR কোডে ইউজারের ID আছে
+const segments = teacherlink.split('/');
+const teacherId = segments[segments.length - 1];
       setScannedResult(`প্রসেসিং আইডি: ${teacherId}`);
       
       setLoading(true);
