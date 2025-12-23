@@ -1,66 +1,73 @@
-"use client"
-// components/QrScanner.js
+"use client";
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
+//import { toast, Toaster } from 'react-hot-toast'; // নোটিফিকেশনের জন্য (ঐচ্ছিক)
 
-// Dynamically import the Scanner component with ssr: false
 const Scanner = dynamic(
   () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
-  {
-    ssr: false, // This is CRITICAL for camera-based components in Next.js
-  }
+  { ssr: false }
 );
 
 function QrScannerComponent() {
-  const [scannedResult, setScannedResult] = useState('No result scanned yet');
-  const [isScanning, setIsScanning] = useState(true);
+  const [scannedResult, setScannedResult] = useState('স্ক্যান করার জন্য অপেক্ষা করছি...');
+  const [loading, setLoading] = useState(false);
 
-  const handleScan = (result: string | any[]) => {
-    if (result && result.length > 0) {
-      // The result is an array of detected codes. We take the text from the first one.
-      const decodedText = result[0].rawValue;
-      setScannedResult(decodedText);
-      setIsScanning(false); // Optionally stop scanning after a successful read
+  const handleScan = async (result: any[]) => {
+    if (result && result.length > 0 && !loading) {
+      const teacherId = result[0].rawValue; // ধরে নিচ্ছি QR কোডে ইউজারের ID আছে
+      setScannedResult(`প্রসেসিং আইডি: ${teacherId}`);
+      
+      setLoading(true);
+      try {
+        const response = await fetch('/api/attendance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            teacherId, 
+            status: 'Present' // আপনি চাইলে সময়ের ওপর ভিত্তি করে Late লজিক API-তে রাখতে পারেন
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          //toast.success("হাজিরা সফলভাবে গৃহীত হয়েছে!");
+          setScannedResult(`সফল: ${teacherId}`);
+        } else {
+          //toast.error(data.message || "ব্যর্থ হয়েছে");
+          setScannedResult(`ভুল: ${data.message}`);
+        }
+      } catch (error) {
+       // toast.error("সার্ভার এরর!");
+        console.error(error);
+      } finally {
+        // ৩ সেকেন্ড পর আবার স্ক্যান করার সুযোগ দিবে
+        setTimeout(() => setLoading(false), 1000);
+      }
     }
   };
 
-  // const handleError = (error: { message: any; }) => {
-  //   console.error('QR Scanner Error:', error);
-  //   // You can set a user-friendly error message here
-  //   setScannedResult(`Error: ${error.message || 'Camera access failed.'}`);
-  // };
-
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
-      <h2>QR Code Scanner</h2>
+    <div className="max-w-md mx-auto p-5 text-center">
+      {/* <Toaster /> */}
+      {scannedResult}
+      <h2 className="text-2xl font-bold mb-4">মাদরাসা হাজিরা সিস্টেম (QR)</h2>
 
-      {isScanning && (
-        <div style={{ border: '2px solid #333', borderRadius: '8px', overflow: 'hidden' }}>
-          {/* The Scanner component is rendered here (client-side only) */}
-          <Scanner
-            onScan={handleScan}
- 
-            constraints={{ facingMode: 'environment' }} // Use rear camera
-            allowMultiple={false} // Only scan one code at a time
-          />
-        </div>
-      )}
+      <div className="border-4 border-green-500 rounded-lg overflow-hidden shadow-xl">
+        <Scanner
+          onScan={handleScan}
+          constraints={{ facingMode: 'environment' }}
+          allowMultiple={false}
+          paused={loading} // প্রসেসিং চলাকালীন স্ক্যানার বন্ধ থাকবে
+        />
+      </div>
 
-      <p style={{ marginTop: '20px', fontSize: '1.1em', fontWeight: 'bold' }}>
-        Scanned Result: <span style={{ color: scannedResult.startsWith('No') ? '#888' : 'green' }}>{scannedResult}</span>
-      </p>
+      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+        <p className="text-sm text-gray-600">স্ক্যান রেজাল্ট:</p>
+        <p className="text-lg font-mono font-bold text-blue-700">{scannedResult}</p>
+      </div>
 
-      {!isScanning && (
-        <button 
-          onClick={() => {
-            setScannedResult('Scanning...');
-            setIsScanning(true);
-          }}
-          style={{ padding: '10px 20px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Scan Another QR Code
-        </button>
-      )}
+      {loading && <p className="mt-2 text-orange-500 animate-pulse">ডাটাবেসে সেভ হচ্ছে...</p>}
     </div>
   );
 }

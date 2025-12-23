@@ -6,39 +6,11 @@ function App() {
   const { Canvas } = useQRCode();
  const [names , useName] = useState([
   {
-    id: 1,
+    id: "694a4288596f5b4548de0a91",
     name: "Md Mahbub Mollah",
     phone: "01301607901",
-  },
-    {
-    id: 2,
-    name: "Md Abdul Kadir Nahid",
-    phone: "01301607901",
   }
-  ,
-    {
-    id: 3,
-    name: "Md Abdul Kadir Nahid",
-    phone: "01301607901",
-  }
-  ,
-    {
-    id: 4,
-    name: "Md Abdul Kadir Nahid",
-    phone: "01301607901",
-  }
-  ,
-    {
-    id: 5,
-    name: "Md Abdul Kadir Nahid",
-    phone: "01301607901",
-  }
-  ,
-    {
-    id: 6,
-    name: "Md Abdul Kadir Nahid",
-    phone: "01301607901",
-  }
+
  ])
 
 
@@ -49,7 +21,7 @@ function App() {
     <h3>{n.name}</h3>
     <p>{n.id+n.name.split(" ").join("_")}</p>
     <Canvas
-      text={`https://vercel.dnamit.com/profile/${n.id+n.name.split(" ").join("_")}`}
+      text={`https://vercel.dnamit.com/profile/${n.id}`}
       options={{
         errorCorrectionLevel: 'M',
         margin: 3,
