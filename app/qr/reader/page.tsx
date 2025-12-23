@@ -12,38 +12,60 @@ function QrScannerComponent() {
   const [scannedResult, setScannedResult] = useState('স্ক্যান করার জন্য অপেক্ষা করছি...');
   const [loading, setLoading] = useState(false);
 
-  const handleScan = async (result: any[]) => {
+const handleScan = async (result: any[]) => {
     if (result && result.length > 0 && !loading) {
-      const teacherlink = result[0].rawValue; // ধরে নিচ্ছি QR কোডে ইউজারের ID আছে
-const segments = teacherlink.split('/');
-const teacherId = segments[segments.length - 1];
-      setScannedResult(`প্রসেসিং আইডি: ${teacherId}`);
+      const teacherlink = result[0].rawValue;
+      const segments = teacherlink.split('/');
+      const teacherId = segments[segments.length - 1];
       
       setLoading(true);
+
       try {
+        // ১. বাংলাদেশের বর্তমান সময় বের করা
+        const now = new Date();
+        const dhakaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+        const hours = dhakaTime.getHours();
+        const minutes = dhakaTime.getMinutes();
+        const currentTimeInMinutes = hours * 60 + minutes;
+
+        // ২. সময়ের লজিক সেট করা
+        // ৮:২৫ = (৮ * ৬০) + ২৫ = ৫০৫ মিনিট
+        // ১৪:০০ (২:০০ PM) = ১৪ * ৬০ = ৮৪০ মিনিট
+        
+        let status = "Enter"; // ডিফল্ট
+
+        if (currentTimeInMinutes >= 840) {
+          status = "Exit"; // দুপুর ২টার পর
+        } else if (currentTimeInMinutes > 505) {
+          status = "Late"; // সকাল ৮:২৫ এর পর
+        } else {
+          status = "Enter"; // ৮:২৫ এর আগে
+        }
+
+        setScannedResult(`প্রসেসিং: ${status} (${teacherId})`);
+
+        // ৩. API কল করা
         const response = await fetch('/api/attendance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             teacherId, 
-            status: 'Present' // আপনি চাইলে সময়ের ওপর ভিত্তি করে Late লজিক API-তে রাখতে পারেন
+            status: status 
           }),
         });
 
         const data = await response.json();
 
         if (data.status === 'success') {
-          //toast.success("হাজিরা সফলভাবে গৃহীত হয়েছে!");
-          setScannedResult(`সফল: ${teacherId}`);
+          setScannedResult(`সফল ভাবে ${status} হয়েছে: ${teacherId}`);
         } else {
-          //toast.error(data.message || "ব্যর্থ হয়েছে");
           setScannedResult(`ভুল: ${data.message}`);
         }
       } catch (error) {
-       // toast.error("সার্ভার এরর!");
         console.error(error);
+        setScannedResult("সার্ভার এরর!");
       } finally {
-        // ৩ সেকেন্ড পর আবার স্ক্যান করার সুযোগ দিবে
+        // ১ সেকেন্ড পর আবার স্ক্যান করার সুযোগ দিবে
         setTimeout(() => setLoading(false), 1000);
       }
     }
