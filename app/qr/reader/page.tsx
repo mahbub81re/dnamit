@@ -34,12 +34,10 @@ const handleScan = async (result: any[]) => {
         
         let status = "Enter"; // ডিফল্ট
 
-        if (currentTimeInMinutes >= 840) {
-          status = "Exit"; // দুপুর ২টার পর
-        } else if (currentTimeInMinutes > 505) {
+         if (currentTimeInMinutes > 505) {
           status = "Late"; // সকাল ৮:২৫ এর পর
         } else {
-          status = "Enter"; // ৮:২৫ এর আগে
+          status = "Present"; // ৮:২৫ এর আগে
         }
 
         setScannedResult(`প্রসেসিং: ${status} (${teacherId})`);
