@@ -33,12 +33,12 @@ export async function POST(req: NextRequest) {
 
     // চেক করা: আজ এই শিক্ষকের হাজিরা ইতিমধ্যে নেওয়া হয়েছে কি না
     const existingEntry = await Attendance.findOne({ teacherId, date: today });
-    if (existingEntry) {
-      return NextResponse.json(
-        { status: "error", message: "আজকের হাজিরা ইতিমধ্যে সম্পন্ন হয়েছে" },
-        { status: 400 }
-      );
-    }
+    // if (existingEntry) {
+    //   return NextResponse.json(
+    //     { status: "error", message: "আজকের হাজিরা ইতিমধ্যে সম্পন্ন হয়েছে" },
+    //     { status: 400 }
+    //   );
+    // }
 
 
     const newAttendance = await Attendance.create({
