@@ -6,9 +6,9 @@ function App() {
   const { Canvas } = useQRCode();
  const [names , useName] = useState([
   {
-    id: "694a4288596f5b4548de0a91",
+    id: "694a40bc596f5b4548de0a8e",
     name: "Md Mahbub Mollah",
-    phone: "01301607901",
+    phone: "01301607901sdf",
   }
 
  ])
