@@ -62,7 +62,12 @@ export default async function AttendanceListPage() {
                   </span>
                 </td>
                 <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-500">
-                  {new Date(record.createdAt).toLocaleTimeString('bn-BD')}
+                  {new Date(record.createdAt).toLocaleTimeString('bn-BD', {
+                                 timeZone: 'Asia/Dhaka',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  })}
                 </td>
               </tr>
             ))}

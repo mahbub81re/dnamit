@@ -24,7 +24,12 @@ export async function POST(req: NextRequest) {
     const { teacherId, status } = await req.json();
 
     // আজকের তারিখ বের করা (YYYY-MM-DD)
-    const today = new Date().toISOString().split('T')[0];
+   const today = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Dhaka',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date());
 
     // চেক করা: আজ এই শিক্ষকের হাজিরা ইতিমধ্যে নেওয়া হয়েছে কি না
     const existingEntry = await Attendance.findOne({ teacherId, date: today });
@@ -34,6 +39,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
 
     const newAttendance = await Attendance.create({
       teacherId,
