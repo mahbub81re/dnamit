@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 export interface IAttendance extends Document {
   teacherId: string;
   date: string;       // <--- এটি ইন্টারফেসে থাকতে হবে
-  status: 'Present' | 'Late';
+  status: 'Enter' | 'Late' | 'Exit' ;
   createdAt: Date;
   updatedAt: Date;
 }
