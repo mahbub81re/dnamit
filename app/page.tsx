@@ -36,7 +36,6 @@ export default function LandingPage() {
             <a href="#about" className="hover:text-emerald-600 transition">মাদরাসা পরিচিতি</a>
             <a href="#teachers" className="hover:text-emerald-600 transition">শিক্ষকবৃন্দ</a>
             <a href="#notice" className="hover:text-emerald-600 transition">নোটিশ</a>
-            <Link href="/qr/att" className="hover:text-emerald-600 transition">হাজিরা রিপোর্ট</Link>
           </div>
 
           <div className="flex items-center gap-3">
