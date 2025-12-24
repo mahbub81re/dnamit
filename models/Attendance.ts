@@ -1,7 +1,8 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
+import { IUser } from './User';
 
 export interface IAttendance extends Document {
-  user: mongoose.Types.ObjectId; // ডাটাবেস রিলেশনশিপের জন্য
+  user: mongoose.Types.ObjectId | IUser; // এখানে IUser ইমপোর্ট করে দিতে পারেন
   date: string; 
   status: 'Enter' | 'Late' | 'Exit';
   createdAt: Date;

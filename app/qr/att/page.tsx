@@ -7,13 +7,20 @@ export const dynamic = 'force-dynamic';
 
 async function getAttendanceData() {
   await dbConnect();
-  // আমরা এখন 'user' ফিল্ডটি populate করবো কারণ মডেলে আমরা user: ObjectId যোগ করেছি
+  
+
+  const _ = User; 
+
   const records = await Attendance.find({})
-    .populate('user', 'name role') 
+    .populate({
+      path: 'user',
+      model: User // সরাসরি মডেল অবজেক্টটি পাস করে দেওয়া ভালো
+    }) 
     .sort({ createdAt: -1 });
-    console.log(records);
+    
   return records;
 }
+
 
 export default async function AttendanceListPage() {
   const attendanceRecords = await getAttendanceData();
