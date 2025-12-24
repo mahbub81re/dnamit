@@ -42,7 +42,7 @@ function QrScannerComponent() {
           
           // ৩. ২ সেকেন্ড পর ড্যাশবোর্ডে পাঠিয়ে দেওয়া
           setTimeout(() => {
-            router.push('/qr/att'); // অথবা ইউজারের প্রোফাইল পেজ
+            router.push(''); // অথবা ইউজারের প্রোফাইল পেজ
           }, 1500);
         } else {
           setScannedResult(`ভুল কিউআর কোড: ${data.message}`);
