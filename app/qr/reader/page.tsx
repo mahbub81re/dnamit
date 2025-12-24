@@ -13,61 +13,56 @@ function QrScannerComponent() {
   const [loading, setLoading] = useState(false);
 
 const handleScan = async (result: any[]) => {
-    if (result && result.length > 0 && !loading) {
-      const teacherlink = result[0].rawValue;
-      const segments = teacherlink.split('/');
-      const teacherId = segments[segments.length - 1];
-      
-      setLoading(true);
+  if (result && result.length > 0 && !loading) {
+    const teacherlink = result[0].rawValue;
+    const segments = teacherlink.split('/');
+    const teacherId = segments[segments.length - 1];
+    
+    setLoading(true);
 
-      try {
-        // ১. বাংলাদেশের বর্তমান সময় বের করা
-        const now = new Date();
-        const dhakaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
-        const hours = dhakaTime.getHours();
-        const minutes = dhakaTime.getMinutes();
-        const currentTimeInMinutes = hours * 60 + minutes;
+    try {
+      const now = new Date();
+      const dhakaTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
+      const hours = dhakaTime.getHours();
+      const minutes = dhakaTime.getMinutes();
+      const currentTimeInMinutes = hours * 60 + minutes;
 
-        // ২. সময়ের লজিক সেট করা
-        // ৮:২৫ = (৮ * ৬০) + ২৫ = ৫০৫ মিনিট
-        // ১৪:০০ (২:০০ PM) = ১৪ * ৬০ = ৮৪০ মিনিট
-        
-        let status = "Enter"; // ডিফল্ট
+      // লজিক ভেরিয়েবল
+      let status = "Enter"; 
+      const lateThreshold = 505; // ৮:২৫ AM
+      const exitThreshold = 840; // ২:০০ PM
 
-         if (currentTimeInMinutes > 505) {
-          status = "Late"; // সকাল ৮:২৫ এর পর
-        } else {
-          status = "Present"; // ৮:২৫ এর আগে
-        }
-
-        setScannedResult(`প্রসেসিং: ${status} (${teacherId})`);
-
-        // ৩. API কল করা
-        const response = await fetch('/api/attendance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            teacherId, 
-            status: status 
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.status === 'success') {
-          setScannedResult(`সফল ভাবে ${status} হয়েছে: ${teacherId}`);
-        } else {
-          setScannedResult(`ভুল: ${data.message}`);
-        }
-      } catch (error) {
-        console.error(error);
-        setScannedResult("সার্ভার এরর!");
-      } finally {
-        // ১ সেকেন্ড পর আবার স্ক্যান করার সুযোগ দিবে
-        setTimeout(() => setLoading(false), 1000);
+      // সময়ের ভিত্তিতে স্ট্যাটাস নির্ধারণ
+      if (currentTimeInMinutes >= exitThreshold) {
+        status = "Exit";
+      } else if (currentTimeInMinutes > lateThreshold) {
+        status = "Late";
+      } else {
+        status = "Enter";
       }
+
+      setScannedResult(`প্রসেসিং: ${status}...`);
+
+      const response = await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacherId, status, date: new Date().toISOString().split('T')[0] }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        setScannedResult(`অভিনন্দন! আপনার ${status} রেকর্ড হয়েছে।`);
+      } else {
+        setScannedResult(`দুঃখিত: ${data.message}`);
+      }
+    } catch (error) {
+      setScannedResult("সার্ভার কানেকশন এরর!");
+    } finally {
+      setTimeout(() => setLoading(false), 2000); // ২ সেকেন্ড বিরতি যাতে ডাবল স্ক্যান না হয়
     }
-  };
+  }
+};
 
   return (
     <div className="max-w-md mx-auto p-5 text-center">
