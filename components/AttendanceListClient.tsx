@@ -43,8 +43,8 @@ export default function AttendanceListClient({ initialRecords = [] }: { initialR
               className="pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-600 appearance-none"
             >
               <option value="All">সকল ইউজার</option>
-              <option value="Teacher">শিক্ষক</option>
-              <option value="Student">ছাত্র</option>
+              <option value="teacher">শিক্ষক</option>
+              <option value="student">ছাত্র</option>
             </select>
           </div>
         </div>
