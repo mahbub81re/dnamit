@@ -17,30 +17,31 @@ export async function GET() {
   }
 }
 
-// ২. POST: নতুন হাজিরা এন্ট্রি করা
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
     const { user, status } = await req.json();
 
-    // আজকের তারিখ বের করা (YYYY-MM-DD)
-   const today = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'Asia/Dhaka',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-}).format(new Date());
+    // ১. আজকের তারিখ (ঢাকা টাইমজোন অনুযায়ী)
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Dhaka',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
 
-    // চেক করা: আজ এই শিক্ষকের হাজিরা ইতিমধ্যে নেওয়া হয়েছে কি না
-    // const existingEntry = await Attendance.findOne({ user, date: today });
-    // if (existingEntry) {
-    //   return NextResponse.json(
-    //     { status: "error", message: "আজকের হাজিরা ইতিমধ্যে সম্পন্ন হয়েছে" },
-    //     { status: 400 }
-    //   );
-    // }
+    // ২. ৪০ দিন পূর্বের তারিখ বের করা
+    const fortyDaysAgo = new Date();
+    fortyDaysAgo.setDate(fortyDaysAgo.getDate() - 40);
 
+    // ৩. ৪০ দিনের বেশি পুরনো হাজিরা ডিলিট করা
+    // এটি ব্যাকগ্রাউন্ডে চলবে যাতে ইউজারের হাজিরা নিতে দেরি না হয়
+    await Attendance.deleteMany({
+      createdAt: { $lt: fortyDaysAgo }
+    });
 
+    // ৪. নতুন হাজিরা তৈরি
     const newAttendance = await Attendance.create({
       status,
       user,
@@ -52,3 +53,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "error", message: error.message }, { status: 400 });
   }
 }
+
+// GET মেথড আগের মতোই থাকবে...
