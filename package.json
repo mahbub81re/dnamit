@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@yudiel/react-qr-scanner": "^2.4.1",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.562.0",
     "mongodb": "^5.8.0",

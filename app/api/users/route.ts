@@ -1,6 +1,8 @@
 import dbConnect from '@/libs/dbConnect';
 import User from '@/models/User';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs'; // পাসওয়ার্ড এনক্রিপ্ট করার জন্য (npm install bcryptjs)
+
 
 // ১. GET: সব ইউজার দেখা
 export async function GET() {
@@ -13,21 +15,35 @@ export async function GET() {
   }
 }
 
-// ২. POST: নতুন ইউজার (ছাত্র/শিক্ষক) তৈরি করা
+
+
+
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
-    const body = await req.json();
-    
-    // ইমেইল চেক করা
-    const existingUser = await User.findOne({ email: body.email });
+    const { name, email, password, role } = await req.json();
+
+    // ১. চেক করা ইউজার আগে থেকে আছে কি না
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return Response.json({ status: "error", message: "Email already exists" }, { status: 400 });
+      return NextResponse.json({ status: "error", message: "এই ইমেইল দিয়ে আগেই ইউজার তৈরি করা হয়েছে!" }, { status: 400 });
     }
 
-    const newUser = await User.create(body);
-    return Response.json({ status: "success", data: newUser }, { status: 201 });
+    // ২. পাসওয়ার্ড হ্যাশ করা
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // ৩. নতুন ইউজার তৈরি
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role
+    });
+
+    return NextResponse.json({ status: "success", data: newUser }, { status: 201 });
+
   } catch (error: any) {
-    return Response.json({ status: "error", message: error.message }, { status: 400 });
+    return NextResponse.json({ status: "error", message: error.message }, { status: 500 });
   }
 }
