@@ -1,101 +1,96 @@
-import React from 'react';
-import dbConnect from '@/libs/dbConnect';
-import User from '@/models/User';
-import Link from 'next/link';
+"use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-// প্রতিবার লেটেস্ট ডাটা দেখানোর জন্য
-export const dynamic = 'force-dynamic';
+export default function AddUserPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    role: 'teacher',
+    password: 'password123', // আপনি চাইলে এটি ইনপুট ফিল্ড হিসেবেও নিতে পারেন
+  });
 
-async function getUsers() {
-  await dbConnect();
-  // পাসওয়ার্ড বাদে সব তথ্য নিয়ে আসা
-  return await User.find({}).sort({ createdAt: -1 });
-}
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-export default async function UserListPage() {
-  const users = await getUsers();
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.status === 'success') {
+        alert("ইউজার সফলভাবে যোগ করা হয়েছে!");
+        router.push('/users'); // লিস্ট পেজে পাঠিয়ে দিবে
+        router.refresh();
+      } else {
+        alert(data.message || "কিছু ভুল হয়েছে");
+      }
+    } catch (error) {
+      alert("সার্ভার এরর!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">নতুন ইউজার যোগ করুন</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">মাদরাসা ইউজার তালিকা</h1>
-          <p className="text-gray-500">মোট ইউজার সংখ্যা: {users.length} জন</p>
+          <label className="block text-sm font-medium text-gray-700">নাম</label>
+          <input
+            type="text"
+            required
+            className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            placeholder="পুরো নাম লিখুন"
+          />
         </div>
-        <Link 
-          href="/users/add" 
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition shadow-md"
-        >
-          + নতুন ইউজার যোগ করুন
-        </Link>
-      </div>
 
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">ইউজারের নাম ও ইমেইল</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">রোল (Role)</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">স্ট্যাটাস</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-center">অ্যাকশন</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {users.map((user: any) => (
-                <tr key={user._id} className="hover:bg-blue-50/50 transition">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3">
-                        {user.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                      user.role === 'teacher' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
-                      {user.role.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="flex items-center text-sm text-gray-600">
-                      <span className={`h-2 w-2 rounded-full mr-2 ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                      {user.isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center gap-3">
-                      <Link 
-                        href={`/profile/${user._id}`}
-                        className="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded border border-indigo-200"
-                      >
-                        প্রোফাইল
-                      </Link>
-                      <Link 
-                        href={`/qr/maker?id=${user._id}`}
-                        className="text-xs bg-gray-50 text-gray-600 hover:bg-gray-100 px-3 py-1.5 rounded border border-gray-200"
-                      >
-                        QR কার্ড
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">ইমেইল</label>
+          <input
+            type="email"
+            required
+            className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            value={formData.email}
+            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            placeholder="example@gmail.com"
+          />
         </div>
-        {users.length === 0 && (
-          <div className="p-10 text-center text-gray-500">
-            কোনো ইউজার পাওয়া যায়নি।
-          </div>
-        )}
-      </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">রোল (Role)</label>
+          <select
+            className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            value={formData.role}
+            onChange={(e) => setFormData({...formData, role: e.target.value})}
+          >
+            <option value="teacher">শিক্ষক (Teacher)</option>
+            <option value="student">ছাত্র (Student)</option>
+            <option value="admin">এডমিন (Admin)</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-2 px-4 rounded-lg text-white font-semibold transition ${
+            loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700 shadow-lg'
+          }`}
+        >
+          {loading ? "সেভ হচ্ছে..." : "ইউজার তৈরি করুন"}
+        </button>
+      </form>
     </div>
   );
 }

@@ -1,17 +1,17 @@
 import React from 'react';
 import dbConnect from '@/libs/dbConnect';
 import Attendance from '@/models/Attendance';
-import User from '@/models/User'; // populate করার জন্য প্রয়োজন
+import User from '@/models/User'; 
 
-// রিফ্রেশ করলে যাতে নতুন ডাটা আসে
 export const dynamic = 'force-dynamic';
 
 async function getAttendanceData() {
   await dbConnect();
-  // populate ব্যবহার করে শিক্ষকের নাম এবং রোল নিয়ে আসা
+  // আমরা এখন 'user' ফিল্ডটি populate করবো কারণ মডেলে আমরা user: ObjectId যোগ করেছি
   const records = await Attendance.find({})
-    .populate('teacherId', 'name role') 
+    .populate('user', 'name role') 
     .sort({ createdAt: -1 });
+    console.log(records);
   return records;
 }
 
@@ -19,67 +19,71 @@ export default async function AttendanceListPage() {
   const attendanceRecords = await getAttendanceData();
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 min-h-screen bg-gray-50">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">মাদরাসা হাজিরার তালিকা</h1>
-        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">মাদরাসা হাজিরার রিপোর্ট</h1>
+          <p className="text-sm text-gray-500">বাংলাদেশ সময় (BST) অনুযায়ী প্রদর্শিত</p>
+        </div>
+        <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-lg shadow-sm">
           মোট রেকর্ড: {attendanceRecords.length}
         </span>
       </div>
 
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
-        <table className="min-w-full leading-normal">
+      <div className="overflow-x-auto bg-white shadow-xl rounded-xl border border-gray-100">
+        <table className="min-w-full table-auto">
           <thead>
-            <tr className="bg-gray-100 text-left text-gray-600 uppercase text-sm tracking-wider">
-              <th className="px-5 py-3 border-b-2">শিক্ষকের নাম</th>
-              <th className="px-5 py-3 border-b-2">রোল (Role)</th>
-              <th className="px-5 py-3 border-b-2">তারিখ</th>
-              <th className="px-5 py-3 border-b-2">স্ট্যাটাস</th>
-              <th className="px-5 py-3 border-b-2">সময়</th>
+            <tr className="bg-gray-100 text-left text-gray-600 uppercase text-xs tracking-widest">
+              <th className="px-6 py-4 font-bold">নাম ও পদবী</th>
+              <th className="px-6 py-4 font-bold">তারিখ</th>
+              <th className="px-6 py-4 font-bold text-center">স্ট্যাটাস</th>
+              <th className="px-6 py-4 font-bold text-right">সময়</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {attendanceRecords.map((record: any) => (
-              <tr key={record._id} className="hover:bg-gray-50">
-                <td className="px-5 py-4 border-b border-gray-200 text-sm">
-                  <p className="text-gray-900 font-semibold">
-                    {record.teacherId?.name || 'অজানা ইউজার'}
-                  </p>
+              <tr key={record._id} className="hover:bg-blue-50/30 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="font-semibold text-gray-900">
+                    {/* আমরা user এবং teacherId দুই ব্যাকআপই রাখছি */}
+                    {record.user?.name || 'অজানা'}
+                  </div>
+                  <div className="text-xs text-gray-500 capitalize">
+                    {record.user?.role || 'N/A'}
+                  </div>
                 </td>
-                <td className="px-5 py-4 border-b border-gray-200 text-sm">
-                  <span className="capitalize text-gray-600">{record.teacherId?.role || 'N/A'}</span>
-                </td>
-                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-700">
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {/* তারিখটিকেও বাংলায় ফরম্যাট করতে পারেন চাইলে */}
                   {record.date}
                 </td>
-                <td className="px-5 py-4 border-b border-gray-200 text-sm">
-                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                    record.status === 'Present' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-red-100 text-red-700'
+                <td className="px-6 py-4 text-center">
+                  <span className={`px-3 py-1 rounded-full text-xs font-extrabold shadow-sm ${
+                    record.status === 'Enter' ? 'bg-green-100 text-green-700 border border-green-200' :
+                    record.status === 'Late' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                    'bg-blue-100 text-blue-700 border border-blue-200'
                   }`}>
-                    {record.status === 'Present' ? 'উপস্থিত' : 'বিলম্বিত'}
+                    {record.status === 'Enter' ? 'প্রবেশ' : 
+                     record.status === 'Late' ? 'বিলম্ব' : 'প্রস্থান'}
                   </span>
                 </td>
-                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-500">
+                <td className="px-6 py-4 text-right text-sm font-medium text-gray-500">
                   {new Date(record.createdAt).toLocaleTimeString('bn-BD', {
-                                 timeZone: 'Asia/Dhaka',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  })}
+                    timeZone: 'Asia/Dhaka',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  })}
                 </td>
               </tr>
             ))}
-            {attendanceRecords.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-10 text-gray-500">
-                  আজকের কোনো হাজিরার রেকর্ড পাওয়া যায়নি।
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
+
+        {attendanceRecords.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-gray-400 italic">আজকের কোনো হাজিরার তথ্য পাওয়া যায়নি।</p>
+          </div>
+        )}
       </div>
     </div>
   );

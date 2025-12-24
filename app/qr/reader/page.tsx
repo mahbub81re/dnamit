@@ -16,7 +16,7 @@ const handleScan = async (result: any[]) => {
   if (result && result.length > 0 && !loading) {
     const teacherlink = result[0].rawValue;
     const segments = teacherlink.split('/');
-    const teacherId = segments[segments.length - 1];
+    const user = segments[segments.length - 1];
     
     setLoading(true);
 
@@ -46,7 +46,7 @@ const handleScan = async (result: any[]) => {
       const response = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teacherId, status, date: new Date().toISOString().split('T')[0] }),
+        body: JSON.stringify({ user, status, date: new Date().toISOString().split('T')[0] }),
       });
 
       const data = await response.json();

@@ -1,29 +1,30 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
-// ১. TypeScript Interface আপডেট
 export interface IAttendance extends Document {
-  teacherId: string;
+  user: mongoose.Types.ObjectId; // ডাটাবেস রিলেশনশিপের জন্য
   date: string; 
-  status: 'Enter' | 'Late' | 'Exit'; // ইন্টারফেস এবং এনাম একই হতে হবে
+  status: 'Enter' | 'Late' | 'Exit';
   createdAt: Date;
   updatedAt: Date;
 }
 
-// ২. Mongoose Schema আপডেট
 const AttendanceSchema: Schema<IAttendance> = new mongoose.Schema({
-  teacherId: {
-    type: String, 
-    required: [true, 'Please provide a teacher ID'],
-  },
+
   date: { 
     type: String,
     required: true,
   },
   status: {
     type: String,
-    enum: ['Enter', 'Late', 'Exit'], // ইন্টারফেসের সাথে মিল রেখে পরিবর্তন করা হয়েছে
-    default: 'Enter',               // ডিফল্ট মান Enter করা হয়েছে
+    enum: ['Enter', 'Late', 'Exit'],
+    default: 'Enter',
   },
+  // User মডেলের সাথে কানেকশন
+  user: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'User', // নিশ্চিত করুন আপনার User মডেলের নাম এখানে ঠিক আছে
+    required: true 
+  }
 }, {
   timestamps: true,
 });
