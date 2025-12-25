@@ -12,6 +12,7 @@
     "@yudiel/react-qr-scanner": "^2.4.1",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
+    "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
     "mongodb": "^5.8.0",
     "mongoose": "^9.0.1",

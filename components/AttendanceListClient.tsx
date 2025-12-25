@@ -45,6 +45,7 @@ export default function AttendanceListClient({ initialRecords = [] }: { initialR
               <option value="All">সকল ইউজার</option>
               <option value="teacher">শিক্ষক</option>
               <option value="student">ছাত্র</option>
+              <option value="admin"> এডমিন</option>
             </select>
           </div>
         </div>
