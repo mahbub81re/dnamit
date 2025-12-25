@@ -107,7 +107,7 @@ export default function PremiumMadrasahLanding() {
                  <div className="flex items-center gap-4 mb-6">
                     <img src="CM.jpeg" className="w-16 h-16 rounded-2xl border-2 border-emerald-500 object-cover shadow-xl" alt="Principal"/>
                     <div>
-                      <h4 className="font-bold text-white">অধ্যক্ষ / মুহতামিম</h4>
+                      <h4 className="font-bold text-white">Chairman</h4>
                       <p className="text-xs text-emerald-400 font-sans tracking-widest uppercase">Darun Nayeem Alim Madrasah</p>
                     </div>
                  </div>
