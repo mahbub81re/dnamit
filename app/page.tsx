@@ -6,6 +6,7 @@ import {
   ChevronRight, ArrowUpRight, Play, Award, GraduationCap 
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function PremiumMadrasahLanding() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -153,9 +154,9 @@ export default function PremiumMadrasahLanding() {
                         </div>
                       </button>
                     ))}
-                    <button className="mt-4 w-full py-4 bg-amber-500 text-black rounded-2xl font-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-transform flex items-center justify-center gap-2">
+                    <Link href={"/qr/login"} className="mt-4 w-full py-4 bg-amber-500 text-black rounded-2xl font-black shadow-lg shadow-amber-500/20 hover:scale-105 transition-transform flex items-center justify-center gap-2">
                       <Play size={18} fill="black" /> লগইন
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 
