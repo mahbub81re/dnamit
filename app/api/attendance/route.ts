@@ -29,8 +29,9 @@ export async function POST(req: Request) {
     // ৩. 'Attendance' নামক শিটে ডাটা পাঠানো
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Attendance!A:E', // শিটের নাম 'Attendance' হতে হবে
+      range: 'Attendance!A1', // শিটের নাম 'Attendance' হতে হবে
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       requestBody: {
         values: [[date, qrcode, userType, status, time]],
       },
