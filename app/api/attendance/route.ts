@@ -1,6 +1,7 @@
 import dbConnect from '@/libs/dbConnect';
 import Attendance from '@/models/Attendance';
 import { NextRequest, NextResponse } from 'next/server';
+import { google } from 'googleapis';
 
 // ১. GET: সকল হাজিরা রিপোর্ট দেখা (শিক্ষকের তথ্যসহ)
 export async function GET() {
@@ -18,39 +19,37 @@ export async function GET() {
 }
 
 
-export async function POST(req: NextRequest) {
+
+export async function POST(req: Request) {
   try {
-    await dbConnect();
-    const { user, status } = await req.json();
+    const { user, status, date } = await req.json();
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Dhaka', hour12: true });
 
-    // ১. আজকের তারিখ (ঢাকা টাইমজোন অনুযায়ী)
-    const today = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Dhaka',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(new Date());
-
-    // ২. ৪০ দিন পূর্বের তারিখ বের করা
-    const fortyDaysAgo = new Date();
-    fortyDaysAgo.setDate(fortyDaysAgo.getDate() - 40);
-
-    // ৩. ৪০ দিনের বেশি পুরনো হাজিরা ডিলিট করা
-    // এটি ব্যাকগ্রাউন্ডে চলবে যাতে ইউজারের হাজিরা নিতে দেরি না হয়
-    await Attendance.deleteMany({
-      createdAt: { $lt: fortyDaysAgo }
+    const auth = new google.auth.GoogleAuth({
+      credentials: JSON.parse("AIzaSyAr1sRDRMy6hG0nrek9IdHjc4" as string),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    // ৪. নতুন হাজিরা তৈরি
-    const newAttendance = await Attendance.create({
-      status,
-      user,
-      date: today
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = '16UYdrUllWkBK1kjHsVTtBirGWyduQkAkYCfB1fuMerM';
+
+    // ইউজার চেক লজিক (উদাহরণ: শিক্ষক আইডি T001 এভাবে শুরু হলে)
+    const isTeacher = user.startsWith('T') || user.includes('teacher');
+    const sheetName = isTeacher ? 'Teachers' : 'Students';
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: `${sheetName}!A:D`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[date, user, status, time]],
+      },
     });
 
-    return NextResponse.json({ status: "success", data: newAttendance }, { status: 201 });
+    return NextResponse.json({ status: 'success' });
   } catch (error: any) {
-    return NextResponse.json({ status: "error", message: error.message }, { status: 400 });
+    return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
   }
 }
 
