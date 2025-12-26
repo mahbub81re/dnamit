@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { user, status, date } = await req.json();
+    const { qrcode, status, date } = await req.json();
     
     const now = new Date();
     const time = now.toLocaleTimeString('en-US', { 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const spreadsheetId = '16UYdrUllWkBK1kjHsVTtBirGWyduQkAkYCfB1fuMerM';
 
     // ২. আইডি প্যাটার্ন অনুযায়ী টাইপ নির্ধারণ
-    const userType = user.startsWith('T-') ? 'Teacher' : 'Student';
+    const userType =  'Teacher' ;
 
     // ৩. 'Attendance' নামক শিটে ডাটা পাঠানো
     await sheets.spreadsheets.values.append({
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       range: 'Attendance!A:E', // শিটের নাম 'Attendance' হতে হবে
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[date, user, userType, status, time]],
+        values: [[date, qrcode, userType, status, time]],
       },
     });
 
