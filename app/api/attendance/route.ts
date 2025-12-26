@@ -1,56 +1,53 @@
-import dbConnect from '@/libs/dbConnect';
-import Attendance from '@/models/Attendance';
-import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
-
-// ১. GET: সকল হাজিরা রিপোর্ট দেখা (শিক্ষকের তথ্যসহ)
-export async function GET() {
-  try {
-    await dbConnect();
-    // populate('teacherId') দিলে ইউজারের নাম ও অন্যান্য তথ্য চলে আসবে
-    const attendanceRecords = await Attendance.find({})
-      .populate('user', 'name email role') 
-      .sort({ createdAt: -1 });
-
-    return NextResponse.json({ status: "success", data: attendanceRecords });
-  } catch (error: any) {
-    return NextResponse.json({ status: "error", message: error.message }, { status: 500 });
-  }
-}
-
-
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { user, status, date } = await req.json();
+    const { qrcode, status, date } = await req.json();
+    
+    // সময় নির্ধারণ (ঢাকা টাইমজোন)
     const now = new Date();
-    const time = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Dhaka', hour12: true });
+    const time = now.toLocaleTimeString('en-US', { 
+      timeZone: 'Asia/Dhaka', 
+      hour12: true,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
 
+    // ১. সার্ভিস অ্যাকাউন্ট অথেন্টিকেশন (এটি এপিআই কি দিয়ে হয় না)
+    // আপনার সার্ভিস অ্যাকাউন্টের JSON ডাটাটি এনভায়রনমেন্ট ভেরিয়েবলে রাখতে হবে
     const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse("AIzaSyAr1sRDRMy6hG0nrek9IdHjc4" as string),
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
     const sheets = google.sheets({ version: 'v4', auth });
+    
+    // আপনার নতুন স্প্রেডশিট আইডি
     const spreadsheetId = '16UYdrUllWkBK1kjHsVTtBirGWyduQkAkYCfB1fuMerM';
 
-    // ইউজার চেক লজিক (উদাহরণ: শিক্ষক আইডি T001 এভাবে শুরু হলে)
-    const isTeacher = user.startsWith('T') || user.includes('teacher');
-    const sheetName = isTeacher ? 'Teachers' : 'Students';
-
+ 
+    // ৩. গুগল শিটে ডাটা পাঠানো (সরাসরি 'Attendance' নামক ট্যাবে)
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${sheetName}!A:D`,
+      range: 'Attendance!A:E', // কলাম: তারিখ, আইডি, টাইপ, স্ট্যাটাস, সময়
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[date, user, status, time]],
+        values: [[date, qrcode, status, time]],
       },
     });
 
     return NextResponse.json({ status: 'success' });
+    
   } catch (error: any) {
-    return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
+    console.error("Google Sheets Error:", error);
+    return NextResponse.json(
+      { status: 'error', message: "অথেন্টিকেশন বা শিট পারমিশন জনিত সমস্যা" }, 
+      { status: 500 }
+    );
   }
 }
-
-// GET মেথড আগের মতোই থাকবে...

@@ -15,7 +15,7 @@ function QrScannerComponent() {
     if (result && result.length > 0 && !loading) {
       const teacherlink = result[0].rawValue;
       const segments = teacherlink.split('/');
-      const user = segments[segments.length - 1];
+      const qrcode = segments[segments.length - 1];
       
       setLoading(true);
       setScannedResult("শনাক্ত করা হচ্ছে...");
@@ -38,13 +38,13 @@ function QrScannerComponent() {
         const response = await fetch('/api/attendance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user, status, date: new Date().toISOString().split('T')[0] }),
+          body: JSON.stringify({ qrcode, status, date: new Date() }),
         });
 
         const data = await response.json();
 
         if (data.status === 'success') {
-          setScannedResult(`${user} - আপনার ${status} রেকর্ড হয়েছে ✅`);
+          setScannedResult(`${qrcode} - আপনার ${status} রেকর্ড হয়েছে ✅`);
         } else {
           setScannedResult(`ব্যর্থ: ${data.message} ❌`);
         }
