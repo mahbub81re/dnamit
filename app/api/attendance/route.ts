@@ -1,46 +1,61 @@
-import { google } from 'googleapis';
+import dbConnect from '@/libs/dbConnect';
+import Attendance from '@/models/Attendance';
+import User from '@/models/User';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
+    await dbConnect();
     const { qrcode, status, date } = await req.json();
-    
-    const now = new Date();
-    const time = now.toLocaleTimeString('en-US', { 
-      timeZone: 'Asia/Dhaka', 
-      hour12: true 
+
+    // ১. QR কোড থেকে আসা ID দিয়ে ডাটাবেসে ইউজারকে খুঁজে বের করা
+    // এখানে ধরা হয়েছে আপনার User মডেলে 'studentId' বা 'teacherId' কলাম আছে
+    const userData = await User.findOne({ 
+      $or: [{ studentId: qrcode }, { teacherId: qrcode }] 
     });
 
-    // ১. সার্ভিস অ্যাকাউন্ট অথেন্টিকেশন
- const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-    // .replace লজিকটি নিশ্চিত করে যে কী-টি ডিকোডারের জন্য পঠনযোগ্য
-    private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  },
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
-    const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = '16UYdrUllWkBK1kjHsVTtBirGWyduQkAkYCfB1fuMerM';
+    if (!userData) {
+      return NextResponse.json({ 
+        status: 'error', 
+        message: 'ইউজার খুঁজে পাওয়া যায়নি!' 
+      }, { status: 404 });
+    }
 
-    // ২. আইডি প্যাটার্ন অনুযায়ী টাইপ নির্ধারণ
-    const userType =  'Teacher' ;
+    // ২. আজকের দিনের ফরম্যাট (YYYY-MM-DD)
+    const attendanceDate = new Date(date).toISOString().split('T')[0];
 
-    // ৩. 'Attendance' নামক শিটে ডাটা পাঠানো
-    await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: 'Attendance!A1', // শিটের নাম 'Attendance' হতে হবে
-      valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
-      requestBody: {
-        values: [[date, qrcode, userType, status, time]],
-      },
+    // ৩. একই দিনে একই স্ট্যাটাস (যেমন দুইবার Enter) চেক করা (অপশনাল কিন্তু ভালো)
+    const existingRecord = await Attendance.findOne({
+      user: userData._id,
+      date: attendanceDate,
+      status: status
     });
 
-    return NextResponse.json({ status: 'success', message: `${userType} হাজিরা সফল` });
-    
+    if (existingRecord) {
+      return NextResponse.json({ 
+        status: 'error', 
+        message: 'আজকের হাজিরা ইতিমধ্যে নেওয়া হয়েছে' 
+      }, { status: 400 });
+    }
+
+    // ৪. ডাটাবেসে সেভ করা
+    const newAttendance = await Attendance.create({
+      user: userData._id, // MongoDB Object ID
+      date: attendanceDate,
+      status: status
+    });
+
+    return NextResponse.json({ 
+      status: 'success', 
+      message: `${userData.name} - আপনার ${status} সফল হয়েছে ✅`,
+      data: newAttendance 
+    });
+
   } catch (error: any) {
-    console.error("Sheet Error:", error.message);
-    return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
+    console.error("Attendance Error:", error);
+    return NextResponse.json({ 
+      status: 'error', 
+      message: error.message 
+    }, { status: 500 });
   }
 }
