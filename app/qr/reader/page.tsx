@@ -55,7 +55,7 @@ function QrScannerComponent() {
         setTimeout(() => {
             setLoading(false);
             setScannedResult('পরবর্তী স্ক্যানের জন্য অপেক্ষা করছি...');
-        }, 3000);
+        }, 1000);
       }
     }
   };
