@@ -21,22 +21,21 @@ export async function POST(req: Request) {
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
     const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = '16UYdrUllWkBK1kjHsVTtBirGWyduQkAkYCfB1fuMerM';
+    const spreadsheetId = '1Zlv9H2bsWKIbNXbX2WtViQ9MLkyI03D33niR0mxdes8';
 
     // ২. আইডি প্যাটার্ন অনুযায়ী টাইপ নির্ধারণ
     const userType =  'Teacher' ;
 
     // ৩. 'Attendance' নামক শিটে ডাটা পাঠানো
-    await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: 'Attendance!A1', // শিটের নাম 'Attendance' হতে হবে
-      valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
+  await sheets.spreadsheets.values.append({
+      spreadsheetId: spreadsheetId, // আপনার শিটের আইডি
+      range: 'attendance!A:A', // শিটের নাম + কলাম রেঞ্জ
+      valueInputOption: 'USER_ENTERED', // ইউজার ইনপুটের মতো ডেটা এন্ট্রি হবে
+      insertDataOption: 'INSERT_ROWS', // নতুন রো ইনসার্ট হবে
       requestBody: {
         values: [[date, qrcode, userType, status, time]],
       },
     });
-
     return NextResponse.json({ status: 'success', message: `${userType} হাজিরা সফল` });
     
   } catch (error: any) {
