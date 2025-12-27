@@ -59,7 +59,7 @@ export default function UserManagement() {
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       {/* ইউজার যোগ করার ফর্ম */}
-      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-10">
+      {/* <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-10">
         <h2 className="text-xl font-bold mb-4 text-center">নতুন শিক্ষক/ছাত্র যোগ করুন</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -92,7 +92,7 @@ export default function UserManagement() {
         </form>
       </div>
 
-      <hr className="my-10" />
+      <hr className="my-10" /> */}
 
       {/* ইউজারদের QR কোড লিস্ট */}
       <h2 className="text-2xl font-bold mb-6 text-center">আইডি কার্ড ও QR কোড তালিকা</h2>
@@ -102,9 +102,7 @@ export default function UserManagement() {
           {names.map((n: any) => (
             <div key={n._id} className="bg-white p-4 rounded-xl shadow-lg border text-center w-64">
               <h3 className="font-bold text-lg text-gray-800">{n.name}</h3>
-              <p className="text-xs text-blue-500 mb-3">{n.role.toUpperCase()}</p>
-              
-              <div className="flex justify-center border-2 border-dashed p-2 rounded-lg bg-gray-50">
+              <div className="flex justify-center border-2 border-dashed rounded-lg bg-gray-50">
                 <Canvas
                   text={`https://vercel.dnamit.com/profile/${n._id}`}
                   options={{
@@ -116,8 +114,6 @@ export default function UserManagement() {
                   }}
                 />
               </div>
-              <p className="mt-2 text-[10px] text-gray-400 font-mono">{n._id}</p>
-              <button className="mt-3 text-xs bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">প্রিন্ট করুন</button>
             </div>
           ))}
         </div>

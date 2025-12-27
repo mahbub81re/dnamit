@@ -8,52 +8,70 @@ export async function POST(req: Request) {
     await dbConnect();
     const { qrcode, status, date } = await req.json();
 
-    // ১. QR কোড থেকে আসা ID দিয়ে ডাটাবেসে ইউজারকে খুঁজে বের করা
-    // এখানে ধরা হয়েছে আপনার User মডেলে 'studentId' বা 'teacherId' কলাম আছে
-    const userData = await User.findById(qrcode);
+    // ১. lean() ব্যবহার করলে কুয়েরি অনেক দ্রুত হয় (এটি শুধু JSON ডাটা দেয়)
+    const userData = await User.findById(qrcode).select('_id name').lean();
 
     if (!userData) {
-      return NextResponse.json({ 
-        status: 'error', 
-        message: 'ইউজার খুঁজে পাওয়া যায়নি!' 
-      }, { status: 404 });
+      return NextResponse.json({ status: 'error', message: 'ইউজার নেই!' }, { status: 404 });
     }
 
-    // ২. আজকের দিনের ফরম্যাট (YYYY-MM-DD)
-    const attendanceDate = new Date(date).toISOString().split('T')[0];
+    const attendanceDate = date.split('T')[0];
 
-    // ৩. একই দিনে একই স্ট্যাটাস (যেমন দুইবার Enter) চেক করা (অপশনাল কিন্তু ভালো)
-    const existingRecord = await Attendance.findOne({
-      user: userData._id,
-      date: attendanceDate,
-      status: status
-    });
+    // ২. চেক এবং সেভ করার লজিককে অপ্টিমাইজ করা
+    // findOneAndUpdate ব্যবহার করলে চেক এবং ইনসার্ট এর কাজ দ্রুত করা যায় (Atomic Operation)
+    const filter = { user: userData._id, date: attendanceDate, status };
+    const update = { $setOnInsert: { user: userData._id, date: attendanceDate, status } };
+    
+    // এটি চেক করবে যদি আগে থেকে থাকে তবে নতুন করে তৈরি করবে না (upsert)
+    const result = await Attendance.findOneAndUpdate(filter, update, { 
+      upsert: true, 
+      new: false // আগের ডাটা থাকলে সেটি দিবে
+    }).lean();
 
-    if (existingRecord) {
-      return NextResponse.json({ 
-        status: 'error', 
-        message: 'আজকের হাজিরা ইতিমধ্যে নেওয়া হয়েছে' 
-      }, { status: 400 });
+    if (result) {
+      return NextResponse.json({ status: 'error', message: 'ইতিমধ্যে হাজিরা নিয়েছেন' }, { status: 400 });
     }
-
-    // ৪. ডাটাবেসে সেভ করা
-    const newAttendance = await Attendance.create({
-      user: userData._id, // MongoDB Object ID
-      date: attendanceDate,
-      status: status
-    });
 
     return NextResponse.json({ 
       status: 'success', 
-      message: `${userData.name} - আপনার ${status} সফল হয়েছে ✅`,
-      data: newAttendance 
+      message: `${userData.name} - ${status} সফল ✅` 
     });
 
   } catch (error: any) {
-    console.error("Attendance Error:", error);
+    return NextResponse.json({ status: 'error', message: 'সার্ভার সমস্যা' }, { status: 500 });
+  }
+}
+
+
+export async function GET() {
+  try {
+    await dbConnect();
+
+    // ১. আজকের তারিখ থেকে ৪০ দিন আগের সময় নির্ধারণ
+    const thresholdDate = new Date();
+    thresholdDate.setDate(thresholdDate.getDate() - 40);
+    const dateString = thresholdDate.toISOString().split('T')[0];
+
+    // ২. ব্যাকগ্রাউন্ডে ডিলিট অপারেশন (await ছাড়া দিলে রেসপন্স ফাস্ট হবে)
+    // ৪০ দিনের আগের সব ডাটা মুছে ফেলা
+    Attendance.deleteMany({ date: { $lt: dateString } }).exec();
+
+    // ৩. গত ৪০ দিনের হাজিরা রিট্রিভ করা
+    // .populate('user', 'name') দিয়ে ইউজারের নামসহ আনা হচ্ছে
+    const attendanceRecords = await Attendance.find({ 
+      date: { $gte: dateString } 
+    })
+    .populate('user', 'name')
+    .sort({ createdAt: -1 })
+    .lean();
+
     return NextResponse.json({ 
-      status: 'error', 
-      message: error.message 
-    }, { status: 500 });
+      status: 'success', 
+      count: attendanceRecords.length,
+      data: attendanceRecords 
+    });
+
+  } catch (error: any) {
+    return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
   }
 }
