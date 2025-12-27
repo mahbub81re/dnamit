@@ -18,7 +18,7 @@ function QrScannerComponent() {
       const qrcode = segments[segments.length - 1];
       
       setLoading(true);
-      setScannedResult("শনাক্ত করা হচ্ছে...");
+      setScannedResult(qrcode);
 
       try {
         const now = new Date();

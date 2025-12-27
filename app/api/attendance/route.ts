@@ -10,9 +10,7 @@ export async function POST(req: Request) {
 
     // ১. QR কোড থেকে আসা ID দিয়ে ডাটাবেসে ইউজারকে খুঁজে বের করা
     // এখানে ধরা হয়েছে আপনার User মডেলে 'studentId' বা 'teacherId' কলাম আছে
-    const userData = await User.findOne({ 
-      $or: [{ studentId: qrcode }, { teacherId: qrcode }] 
-    });
+    const userData = await User.findById(qrcode);
 
     if (!userData) {
       return NextResponse.json({ 
