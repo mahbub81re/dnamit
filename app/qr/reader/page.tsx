@@ -15,7 +15,7 @@ function QrScannerComponent() {
     if (result && result.length > 0 && !loading) {
       const teacherlink = result[0].rawValue;
       const segments = teacherlink.split('/');
-      const qrcode = "Mahbub"
+      const qrcode = segments[segments.length - 1];
       
       setLoading(true);
       setScannedResult("শনাক্ত করা হচ্ছে...");
@@ -64,7 +64,7 @@ function QrScannerComponent() {
     <div className="max-w-md mx-auto p-4 flex flex-col items-center justify-center min-h-[80vh]">
       <div className="bg-white p-6 rounded-3xl shadow-2xl w-full border border-slate-100">
         <h2 className="text-xl font-black mb-6 text-slate-800 text-center">মাদরাসা স্মার্ট হাজিরা</h2>
-        <button onClick={() => handleScan([{ rawValue: 'T-Mahbub' }])} className="mt-4 text-xs text-slate-300">Test Scan</button>
+        
         <div className={`relative rounded-2xl overflow-hidden border-4 transition-colors ${loading ? 'border-orange-400' : 'border-emerald-500'}`}>
           <Scanner
             onScan={handleScan}
