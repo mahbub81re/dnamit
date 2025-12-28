@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
+import AdminGuard from '@/components/AdminGuard';
 
 const Scanner = dynamic(
   () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
@@ -61,6 +62,7 @@ function QrScannerComponent() {
   };
 
   return (
+    <AdminGuard> 
     <div className="max-w-md mx-auto p-4 flex flex-col items-center justify-center min-h-[80vh]">
       <div className="bg-white p-6 rounded-3xl shadow-2xl w-full border border-slate-100">
         <h2 className="text-xl font-black mb-6 text-slate-800 text-center">মাদরাসা স্মার্ট হাজিরা</h2>
@@ -90,6 +92,7 @@ function QrScannerComponent() {
         </div>
       </div>
     </div>
+    </AdminGuard>
   );
 }
 

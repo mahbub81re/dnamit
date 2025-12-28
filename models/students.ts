@@ -1,54 +1,76 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IStudent extends Document {
-  studentId: string;
-  name: string;
-  roll: number;
-  class: string;
-  fatherName: string;
-  motherName: string;
-  userId: mongoose.Types.ObjectId; // User মডেলের সাথে রিলেশন
-  phone: string;
-  address: string;
-  bloodGroup?: string;
-  dob: string;
-  gender: 'Male' | 'Female';
-  status: 'Active' | 'Inactive';
-}
-
 const StudentSchema = new Schema({
-  studentId: { 
-    type: String, 
-    required: true, 
-    unique: true 
-  }, // ইউনিক আইডি (যেমন: DN-2025-001)
-  name: { type: String, required: true },
-  roll: { type: Number, required: true },
-  class: { type: String, required: true },
-  fatherName: { type: String, required: true },
-  motherName: { type: String, required: true },
-  userId: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'User', // User কালেকশনের সাথে লিঙ্ক করা হয়েছে
-    required: true 
-  },
-  phone: { type: String, required: true },
-  address: { type: String, required: true },
-  bloodGroup: { type: String },
-  dob: { type: String, required: true },
-  gender: { 
-    type: String, 
-    enum: ['Male', 'Female'], 
-    required: true 
-  },
-  status: { 
-    type: String, 
-    enum: ['Active', 'Inactive'], 
-    default: 'Active' 
-  },
-}, { 
-  timestamps: true // এর মাধ্যমে স্বয়ংক্রিয়ভাবে createdAt এবং updatedAt তৈরি হবে
-});
+  // রিলেশনাল আইডি
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  
+  // প্রাতিষ্ঠানিক তথ্য
+  session: String,           // শিক্ষাবর্ষ
+  admissionDate: { type: String, default: () => new Date().toLocaleDateString('bn-BD') }, 
+  studentId: { type: String, unique: true, required: true }, // আইডি নং
+  className: String,        // শ্রেণি
+  section: String,          // শাখা
+  rollNo: Number,           // ক্রমিক নং
 
-// মডেলটি যদি ইতিমধ্যে তৈরি থাকে তবে সেটি ব্যবহার করবে, নাহলে নতুন করে তৈরি করবে
-export default mongoose.models.Student || mongoose.model<IStudent>('Student', StudentSchema);
+  // ব্যক্তিগত তথ্য
+  nameBengali: String,      // নাম (বাংলায়)
+  nameEnglish: String,      // নাম (ইংরেজিতে)
+  gender: { type: String, enum: ['Male', 'Female'] },
+  bloodGroup: String,
+  dob: String,              // জন্ম তারিখ
+  age: String,              // বয়স
+  birthRegNo: String,       // জন্ম নিবন্ধন নং
+  nationality: { type: String, default: 'Bangladeshi' },
+  height: String,
+  weight: String,
+  image: String,            // প্রোফাইল পিকচার ইউআরএল
+
+  // অভিভাবকের তথ্য
+  fatherName: String,
+  fatherOccupation: String,
+  fatherMobile: String,
+  motherName: String,
+  motherOccupation: String,
+  motherMobile: String,
+  annualIncome: String,     // বার্ষিক আয়
+  emergencyGuardian: String, // পিতা-মাতার অবর্তমানে অভিভাবক
+
+  // যোগাযোগ
+  currentAddress: {
+    village: String,
+    postOffice: String,
+    upazila: String,
+    district: String
+  },
+  permanentAddress: {
+    village: String,
+    postOffice: String,
+    upazila: String,
+    district: String
+  },
+  mobile: String,
+  transport: String,        // যাতায়াতের মাধ্যম
+
+  // আবাসিক তথ্য
+  residenceType: { type: String, enum: ['আবাসিক', 'অনাবাসিক'] },
+  timingType: { type: String, enum: ['নাইট-কেয়ার', 'ফুল টাইমিং'] },
+
+  // পারিবারিক তথ্য
+  familyMembers: Number,
+  siblings: {
+    brothers: Number,
+    sisters: Number,
+    position: Number        // ভাই-বোনের মধ্যে কত তম?
+  },
+  familyOccupations: {
+    expatriate: Number,     // প্রবাসী
+    serviceHolder: Number,  // চাকুরিজীবী
+    businessman: Number,    // ব্যবসায়ী
+    student: Number,        // ছাত্র
+    unemployed: Number,     // বেকার
+    others: Number
+  },
+  status: { type: String, default: 'Active' }
+}, { timestamps: true });
+
+export default mongoose.models.Student || mongoose.model('Student', StudentSchema);
