@@ -24,9 +24,9 @@ export default async function Page() {
     const serializedRecords = JSON.parse(JSON.stringify(records)) || [];
 
     return (
-      <AdminGuard>
+      // <AdminGuard>
         <AttendanceListClient initialRecords={serializedRecords} />
-      </AdminGuard>
+      // </AdminGuard>
     );
   } catch (error) {
     return <div className="p-10 text-center text-red-500 font-bold">সার্ভার কানেকশন এরর!</div>;
