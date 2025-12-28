@@ -1,13 +1,15 @@
 "use client";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation'; // ১. ইম্পোর্ট করুন
 import { 
   UserPlus, Phone, MapPin, Calendar, 
-  Hash, Droplet, Users, ShieldCheck, CheckCircle2 
+  Droplet, ShieldCheck, CheckCircle2 
 } from 'lucide-react';
 
 export default function StudentAdmissionForm() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter(); // ২. রাউটার হুক ডিফাইন করুন
 
   const [formData, setFormData] = useState({
     name: '', 
@@ -31,7 +33,7 @@ export default function StudentAdmissionForm() {
       const res = await fetch('/api/students', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // ফটো নেই তাই এখন JSON পাঠানো হবে
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
@@ -39,9 +41,14 @@ export default function StudentAdmissionForm() {
       const result = await res.json();
 
       if (res.ok) {
-        alert(`অভিনন্দন! আইডি: ${result.studentId} সফলভাবে নিবন্ধিত হয়েছে।`);
-        // ফর্ম রিসেট করার জন্য:
-        // window.location.reload(); 
+        // ৩. রিডাইরেক্ট লজিক (result.id বা result.data._id আপনার API রেসপন্স অনুযায়ী)
+        // ধরুন আপনার API রেসপন্সে নতুন স্টুডেন্টের আইডি 'id' হিসেবে আছে
+        const studentDatabaseId = result.id; 
+        
+        alert(`অভিনন্দন! সফলভাবে নিবন্ধিত হয়েছে।`);
+        
+        // নির্দিষ্ট ইউআরএল-এ রিডাইরেক্ট
+        router.push(`/users/students/${studentDatabaseId}`); 
       } else {
         alert(result.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে");
       }
@@ -51,6 +58,9 @@ export default function StudentAdmissionForm() {
       setLoading(false);
     }
   };
+
+
+
 
   return (
     <div className="min-h-screen bg-[#020617] p-4 md:p-10 text-slate-200 selection:bg-emerald-500/30">

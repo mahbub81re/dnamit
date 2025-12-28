@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     // ৪. স্টুডেন্ট আইডি জেনারেশন লজিক
     const count = await Students.countDocuments();
     const currentYear = new Date().getFullYear();
-    const generatedId = `DN-${currentYear}-${(count + 1).toString().padStart(3, '0')}`;
+    const generatedId = `DN${currentYear}${(count + 1).toString().padStart(3, '0')}`;
 
     // ৫. স্টুডেন্ট টেবিল এ ডাটা সেভ করা (ফটো ছাড়াই)
     const student = await Students.create({
@@ -57,11 +57,12 @@ export async function POST(req: Request) {
       status: 'Active'
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "শিক্ষার্থী এবং ইউজার সফলভাবে তৈরি হয়েছে",
-      studentId: generatedId 
-    }, { status: 201 });
+
+return NextResponse.json({ 
+  success: true, 
+  id: newUser._id, // এই আইডিটিই ফ্রন্টএন্ডে রিডাইরেক্ট করতে ব্যবহৃত হবে
+  studentId: generatedId 
+}, { status: 201 });
 
   } catch (error: any) {
     console.error("Error creating student:", error);

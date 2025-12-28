@@ -17,7 +17,7 @@ const AttendanceSchema: Schema<IAttendance> = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Enter', 'Late', 'Exit'],
+    enum: ['Present', 'Late', 'Exit'],
     default: 'Enter',
   },
   // User মডেলের সাথে কানেকশন

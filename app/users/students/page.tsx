@@ -6,6 +6,7 @@ import {
   User, Phone, GraduationCap, X 
 } from 'lucide-react';
 import StudentAdmissionForm from '@/components/StudentAdmissionForm';
+import Link from 'next/link';
 
 export default function StudentManagement() {
   const [students, setStudents] = useState([]);
@@ -116,6 +117,9 @@ export default function StudentManagement() {
                     <button onClick={() => handleEdit(student)} className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500 hover:text-black">
                       <Edit2 size={14} />
                     </button>
+                     <Link href={`/users/students/${student._id}`} className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500 hover:text-black">
+                      view
+                    </Link>
                     <button onClick={() => handleDelete(student._id)} className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500 hover:text-white">
                       <Trash2 size={14} />
                     </button>
