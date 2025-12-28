@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   await dbConnect();
   try {
     const { id } = await params;
-    const student = await Students.findById(id);
+    const student = await Students.findOne({userId:id});
     if (!student) return NextResponse.json({ message: "পাওয়া যায়নি" }, { status: 404 });
     return NextResponse.json({ success: true, data: student });
   } catch (error: any) {
