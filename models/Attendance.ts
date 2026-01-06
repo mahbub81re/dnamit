@@ -2,28 +2,28 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 import { IUser } from './User';
 
 export interface IAttendance extends Document {
-  user: mongoose.Types.ObjectId | IUser; // এখানে IUser ইমপোর্ট করে দিতে পারেন
+  user: mongoose.Types.ObjectId | IUser;
   date: string; 
-  status: 'Enter' | 'Late' | 'Exit' | 'Present';
+  // 1. Interface must exactly match the logic in your scanner component
+  status: 'Enter' | 'Late' | 'Exit'; 
   createdAt: Date;
   updatedAt: Date;
 }
 
 const AttendanceSchema: Schema<IAttendance> = new mongoose.Schema({
-
   date: { 
     type: String,
     required: true,
   },
   status: {
     type: String,
-    enum: ['Present', 'Late', 'Exit'],
+    // 2. Add 'Enter' here so it matches your Interface and your Scanner logic
+    enum: ['Enter', 'Late', 'Exit'], 
     default: 'Enter',
   },
-  // User মডেলের সাথে কানেকশন
   user: { 
     type: Schema.Types.ObjectId, 
-    ref: 'User', // নিশ্চিত করুন আপনার User মডেলের নাম এখানে ঠিক আছে
+    ref: 'User', 
     required: true 
   }
 }, {
