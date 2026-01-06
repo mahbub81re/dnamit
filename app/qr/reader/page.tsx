@@ -97,3 +97,6 @@ function QrScannerComponent() {
 }
 
 export default QrScannerComponent;
+
+// AKfycbwj2F0dZ3Pjeu8Mp1GpuBS0_tdJqCSLTe0bFy8_6_6cmr1X0D3aALE4tjh3TBIAuEBmnw
+// https://script.google.com/macros/s/AKfycbwj2F0dZ3Pjeu8Mp1GpuBS0_tdJqCSLTe0bFy8_6_6cmr1X0D3aALE4tjh3TBIAuEBmnw/exec
