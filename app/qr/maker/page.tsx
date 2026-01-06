@@ -101,7 +101,7 @@ export default function UserManagement() {
         <div className='flex flex-row flex-wrap gap-6 justify-center items-center'>
           {names.map((n: any) => (
             <div key={n._id} className="bg-white p-4 rounded-xl shadow-lg border text-center w-64">
-              <h3 className="font-bold text-lg text-gray-800">{n.name}</h3>
+              <h3 className="font-bold text-lg text-gray-800">{n.name}{n.role}</h3>
               <div className="flex justify-center border-2 border-dashed rounded-lg bg-gray-50">
                 <Canvas
                   text={`https://vercel.dnamit.com/profile/${n._id}`}

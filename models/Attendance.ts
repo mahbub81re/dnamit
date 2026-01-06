@@ -4,7 +4,7 @@ import { IUser } from './User';
 export interface IAttendance extends Document {
   user: mongoose.Types.ObjectId | IUser; // এখানে IUser ইমপোর্ট করে দিতে পারেন
   date: string; 
-  status: 'Enter' | 'Late' | 'Exit';
+  status: 'Enter' | 'Late' | 'Exit' | 'Present';
   createdAt: Date;
   updatedAt: Date;
 }
