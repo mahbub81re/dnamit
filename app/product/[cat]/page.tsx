@@ -24,30 +24,83 @@ type CartState = Record<string, CartItem>;
 
 const PRODUCTS_DATA: Record<string, Product[]> = {
   "grocery": [
-    { 
-      "id": "g1", 
-      "name": "মিনিকেট চাল", 
-      "price": 70, 
-      "image": "https://img.freepik.com/free-photo/raw-rice-wooden-bowl_1150-34313.jpg",
-      "description": "পরিষ্কার ও ফ্রেশ উন্নত মানের মিনিকেট চাল।"
-    },
-    { 
-      "id": "g2", 
-      "name": "সয়াবিন তেল", 
-      "price": 180, 
-      "image": "https://img.freepik.com/free-photo/sunflower-oil-bottle-with-flower_1150-17556.jpg",
-      "description": "১০০% খাঁটি সয়াবিন তেল (১ লিটার)।"
-    }
+    { "id": "g1", "name": "মিনিকেট চাল", "price": 72, "image": "https://placehold.co/400x400?text=Rice", "description": "উন্নত মানের পলিশ করা চাল।" },
+    { "id": "g2", "name": "নাজিরশাইল চাল", "price": 85, "image": "https://placehold.co/400x400?text=Rice", "description": "প্রিমিয়াম কোয়ালিটি নাজিরশাইল।" },
+    { "id": "g3", "name": "সয়াবিন তেল (৫লি)", "price": 810, "image": "https://placehold.co/400x400?text=Oil", "description": "পুষ্টিগুণ সম্পন্ন ফ্রেশ তেল।" },
+    { "id": "g4", "name": "মসুর ডাল (দেশি)", "price": 140, "image": "https://placehold.co/400x400?text=Dal", "description": "দ্রুত সেদ্ধ হওয়া দেশি ডাল।" },
+    { "id": "g5", "name": "চিনি (সাদা)", "price": 135, "image": "https://placehold.co/400x400?text=Sugar", "description": "পরিষ্কার দানাদার সাদা চিনি।" },
+    { "id": "g6", "name": "লবণ (আয়োডিনযুক্ত)", "price": 42, "image": "https://placehold.co/400x400?text=Salt", "description": "বিশুদ্ধ আয়োডিনযুক্ত লবণ।" },
+    { "id": "g7", "name": "আটা (২ কেজি)", "price": 115, "image": "https://placehold.co/400x400?text=Atta", "description": "লাল বা সাদা আটা।" },
+    { "id": "g8", "name": "ময়দা (২ কেজি)", "price": 130, "image": "https://placehold.co/400x400?text=Maida", "description": "উন্নত মানের রিফাইনড ময়দা।" },
+    { "id": "g9", "name": "গুড়ো দুধ (৫০০ গ্রাম)", "price": 450, "image": "https://placehold.co/400x400?text=Milk", "description": "ফুল ক্রিম মিল্ক পাউডার।" },
+    { "id": "g10", "name": "চা পাতা (৪০০ গ্রাম)", "price": 220, "image": "https://placehold.co/400x400?text=Tea", "description": "সুগন্ধি ও কড়া লিকারের চা।" },
+    { "id": "g11", "name": "হলুদ গুড়ো", "price": 60, "image": "https://placehold.co/400x400?text=Spice", "description": "১০০ গ্রাম খাঁটি হলুদ গুড়ো।" },
+    { "id": "g12", "name": "মরিচ গুড়ো", "price": 80, "image": "https://placehold.co/400x400?text=Spice", "description": "১০০ গ্রাম ঝাল মরিচ গুড়ো।" },
+    { "id": "g13", "name": "জিরা (১০০ গ্রাম)", "price": 120, "image": "https://placehold.co/400x400?text=Spice", "description": "আস্ত ফ্রেশ জিরা।" },
+    { "id": "g14", "name": "গরম মশলা", "price": 150, "image": "https://placehold.co/400x400?text=Spice", "description": "মিক্সড মশলার প্যাকেট।" },
+    { "id": "g15", "name": "সুজি (৫০০ গ্রাম)", "price": 45, "image": "https://placehold.co/400x400?text=Suji", "description": "পরিষ্কার ও ফ্রেশ সুজি।" },
+    { "id": "g16", "name": "পোলাও চাল (১ কেজি)", "price": 150, "image": "https://placehold.co/400x400?text=Rice", "description": "সুগন্ধি চিনিগুড়া চাল।" },
+    { "id": "g17", "name": "ঘি (২০০ গ্রাম)", "price": 350, "image": "https://placehold.co/400x400?text=Ghee", "description": "খাঁটি গাওয়া ঘি।" },
+    { "id": "g18", "name": "মধু (২৫০ গ্রাম)", "price": 280, "image": "https://placehold.co/400x400?text=Honey", "description": "সুন্দরবনের প্রাকৃতিক মধু।" },
+    { "id": "g19", "name": "কালোজিরা", "price": 50, "image": "https://placehold.co/400x400?text=Spice", "description": "৫০ গ্রাম ফ্রেশ কালোজিরা।" },
+    { "id": "g20", "name": "ছোলা (১ কেজি)", "price": 110, "image": "https://placehold.co/400x400?text=Chola", "description": "দেশি উন্নত মানের ছোলা।" }
   ],
   "vegetables": [
-    { 
-      "id": "v1", 
-      "name": "দেশি আলু", 
-      "price": 40, 
-      "image": "https://img.freepik.com/free-photo/raw-potatoes_144627-14815.jpg",
-      "description": "মাটি ছাড়া পরিষ্কার নতুন আলু।"
-    }
-  ]
+    { "id": "v1", "name": "দেশি আলু", "price": 45, "image": "https://placehold.co/400x400?text=Potato", "description": "মাটি ছাড়া পরিষ্কার নতুন আলু।" },
+    { "id": "v2", "name": "পেঁয়াজ", "price": 90, "image": "https://placehold.co/400x400?text=Onion", "description": "পাবনার ভালো মানের পেঁয়াজ।" },
+    { "id": "v3", "name": "রসুন", "price": 220, "image": "https://placehold.co/400x400?text=Garlic", "description": "বড় দানা দেশি রসুন।" },
+    { "id": "v4", "name": "আদা", "price": 240, "image": "https://placehold.co/400x400?text=Ginger", "description": "ফ্রেশ থাইল্যান্ড/চায়না আদা।" },
+    { "id": "v5", "name": "কাঁচামরিচ", "price": 120, "image": "https://placehold.co/400x400?text=Chili", "description": "ঝাল ও তাজা কাঁচামরিচ।" },
+    { "id": "v6", "name": "টমেটো", "price": 60, "image": "https://placehold.co/400x400?text=Tomato", "description": "লাল পাকা টমেটো।" },
+    { "id": "v7", "name": "বেগুন", "price": 50, "image": "https://placehold.co/400x400?text=Brinjal", "description": "লম্বা বা গোল ফ্রেশ বেগুন।" },
+    { "id": "v8", "name": "ফুলকপি", "price": 40, "image": "https://placehold.co/400x400?text=Vegetable", "description": "মাঝারি সাইজ প্রতি পিস।" },
+    { "id": "v9", "name": "বাঁধাকপি", "price": 30, "image": "https://placehold.co/400x400?text=Vegetable", "description": "তাজা বাঁধাকপি প্রতি পিস।" },
+    { "id": "v10", "name": "পেঁপে", "price": 35, "image": "https://placehold.co/400x400?text=Papaya", "description": "রান্নার জন্য সবুজ পেঁপে।" },
+    { "id": "v11", "name": "লাউ", "price": 60, "image": "https://placehold.co/400x400?text=Gourd", "description": "কচি ও সতেজ লাউ।" },
+    { "id": "v12", "name": "গাজর", "price": 55, "image": "https://placehold.co/400x400?text=Carrot", "description": "টাটকা ও রসালো গাজর।" },
+    { "id": "v13", "name": "শসা", "price": 40, "image": "https://placehold.co/400x400?text=Cucumber", "description": "দেশি হাইব্রিড শসা।" },
+    { "id": "v14", "name": "করল্লা", "price": 70, "image": "https://placehold.co/400x400?text=Vegetable", "description": "কচি উচ্ছে বা করল্লা।" },
+    { "id": "v15", "name": "সিম", "price": 60, "image": "https://placehold.co/400x400?text=Bean", "description": "বিচি ছাড়া নরম সিম।" },
+    { "id": "v16", "name": "ঢেঁড়স", "price": 50, "image": "https://placehold.co/400x400?text=Vegetable", "description": "কচি ও টাটকা ঢেঁড়স।" },
+    { "id": "v17", "name": "বরবটি", "price": 80, "image": "https://placehold.co/400x400?text=Vegetable", "description": "সবুজ ও কচি বরবটি।" },
+    { "id": "v18", "name": "চিচিঙ্গা", "price": 45, "image": "https://placehold.co/400x400?text=Vegetable", "description": "ফ্রেশ চিচিঙ্গা।" },
+    { "id": "v19", "name": "লেবু (৪ পিস)", "price": 20, "image": "https://placehold.co/400x400?text=Lemon", "description": "বেশি রসালো পাতি লেবু।" },
+    { "id": "v20", "name": "ধনেপাতা", "price": 10, "image": "https://placehold.co/400x400?text=Coriander", "description": "সুগন্ধি দেশি ধনেপাতা (মুঠা)।" }
+  ],
+  "cleaning": [
+    { "id": "c1", "name": "হুইল পাউডার (১ কেজি)", "price": 110, "image": "https://placehold.co/400x400?text=Clean", "description": "কাপড় ধোয়ার ডিটারজেন্ট পাউডার।" },
+    { "id": "c2", "name": "বাসন ধোয়ার লিকুইড", "price": 85, "image": "https://placehold.co/400x400?text=Clean", "description": "ভিম লিকুইড ২৫০ মিলি।" },
+    { "id": "c3", "name": "টয়লেট ক্লিনার", "price": 160, "image": "https://placehold.co/400x400?text=Clean", "description": "হারপিক ৫০০ মিলি।" },
+    { "id": "c4", "name": "সাবান (লাক্স)", "price": 65, "image": "https://placehold.co/400x400?text=Soap", "description": "১০০ গ্রাম বিউটি সোপ।" }
+  ],
+"personal_care": [
+    { "id": "pc1", "name": "লাক্স সাবান (১৫০ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Lux+Soap", "description": "সফট স্কিন ও সুগন্ধি বিউটি সোপ।" },
+    { "id": "pc2", "name": "ডেটল সাবান (১২৫ গ্রাম)", "price": 75, "image": "https://placehold.co/400x400?text=Dettol", "description": "জীবাণু নাশক এন্টিসেপটিক সাবান।" },
+    { "id": "pc3", "name": "লাইফবয় হ্যান্ডওয়াশ (রিফিল)", "price": 85, "image": "https://placehold.co/400x400?text=Handwash", "description": "৯৯.৯% জীবাণু থেকে সুরক্ষা।" },
+    { "id": "pc4", "name": "সানসিল্ক শ্যাম্পু (১৮০ মিলি)", "price": 85, "image": "https://placehold.co/400x400?text=Sunsilk", "description": "চুলের সিল্কি ভাব ধরে রাখতে সাহায্য করে।" },
+    { "id": "pc5", "name": "ডোভ শ্যাম্পু (১৭৫ মিলি)", "price": 85, "image": "https://placehold.co/400x400?text=Dove", "description": "ড্যামেজ চুলের যত্নে সেরা শ্যাম্পু।" },
+    { "id": "pc6", "name": "ক্লোজআপ পেস্ট (১৪৫ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Closeup", "description": "দীর্ঘ সময় ফ্রেশ নিঃশ্বাস নিশ্চিত করে।" },
+    { "id": "pc7", "name": "সেনসোডাইন পেস্ট", "price": 85, "image": "https://placehold.co/400x400?text=Sensodyne", "description": "দাঁতের শিরশিরানি দূর করতে কার্যকর।" },
+    { "id": "pc8", "name": "ওরাল-বি টুথব্রাশ", "price": 85, "image": "https://placehold.co/400x400?text=Toothbrush", "description": "দাঁতের প্রতিটি কোণা পরিষ্কার করে।" },
+    { "id": "pc9", "name": "প্যারাসুট নারিকেল তেল (২০০ মিলি)", "price": 85, "image": "https://placehold.co/400x400?text=Coconut+Oil", "description": "১০০% খাঁটি নারিকেল তেল।" },
+    { "id": "pc10", "name": "কুমারিকা হেয়ার অয়েল", "price": 85, "image": "https://placehold.co/400x400?text=Hair+Oil", "description": "চুল পড়া কমাতে সাহায্য করে।" },
+    { "id": "pc11", "name": "পন্ডস ফেসওয়াশ (১০০ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Facewash", "description": "ত্বকের গভীর থেকে ময়লা পরিষ্কার করে।" },
+    { "id": "pc12", "name": "ফেয়ার অ্যান্ড লাভলী (৫০ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Fair+%26+Lovely", "description": "গ্লো অ্যান্ড লাভলী মাল্টিভিটামিন ক্রিম।" },
+    { "id": "pc13", "name": "নিভিয়া লোশন (২০০ মিলি)", "price": 85, "image": "https://placehold.co/400x400?text=Lotion", "description": "শীতকালে ত্বকের ময়েশ্চার ধরে রাখে।" },
+    { "id": "pc14", "name": "মেরিল পেট্রোলিয়াম জেলি", "price": 85, "image": "https://placehold.co/400x400?text=Jelly", "description": "ফাটা ঠোঁট ও ত্বকের যত্নে।" },
+    { "id": "pc15", "name": "জিলেট শেভিং ফোম", "price": 85, "image": "https://placehold.co/400x400?text=Shaving+Foam", "description": "স্মুদ ও আরামদায়ক শেভিং এর জন্য।" },
+    { "id": "pc16", "name": "ফগ ডিওডোরেন্ট (বডি স্প্রে)", "price": 85, "image": "https://placehold.co/400x400?text=Fogg", "description": "দীর্ঘস্থায়ী সুগন্ধি বডি স্প্রে।" },
+    { "id": "pc17", "name": "পাউডার (পন্ডস/তিব্বত)", "price": 85, "image": "https://placehold.co/400x400?text=Powder", "description": "শরীরে সতেজ ভাব বজায় রাখে।" },
+    { "id": "pc18", "name": "স্যনিটারি প্যাড (হুইস্পার)", "price": 85, "image": "https://placehold.co/400x400?text=Whisper", "description": "মেয়েদের পিরিয়ডকালীন স্বস্তি ও সুরক্ষা।" },
+    { "id": "pc19", "name": "টিস্যু পেপার (বক্স)", "price": 85, "image": "https://placehold.co/400x400?text=Tissue", "description": "নরম ও শোষন ক্ষমতাসম্পন্ন টিস্যু।" },
+    { "id": "pc20", "name": "স্যাভলন লিকুইড (১০০ মিলি)", "price": 85, "image": "https://placehold.co/400x400?text=Savlon", "description": "ক্ষত ও মেঝে পরিষ্কার করার জন্য।" }
+  ],
+  "snacks": [],        // বিস্কুট, চানাচুর, চিপস, নুডলস
+  "dairy": [],         // দুধ, দই, মাখন, পনির
+  "baby_care": [],     // ডায়াপার, লোশন, বেবি সোপ
+  "beverages": [],     // জুস, সফট ড্রিংকস, পানি
+  "medicine": [],      // নাপা, গ্যাস্ট্রিকের ওষুধ, ব্যান্ডেজ
+  "fish_meat": []      // মাছ, মুরগি, গরুর মাংস
 };
 
 export default function CategoryPage() {
