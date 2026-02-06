@@ -45,6 +45,32 @@ const PRODUCTS_DATA: Record<string, Product[]> = {
     { "id": "g19", "name": "কালোজিরা", "price": 50, "image": "https://placehold.co/400x400?text=Spice", "description": "৫০ গ্রাম ফ্রেশ কালোজিরা।" },
     { "id": "g20", "name": "ছোলা (১ কেজি)", "price": 110, "image": "https://placehold.co/400x400?text=Chola", "description": "দেশি উন্নত মানের ছোলা।" }
   ],
+
+  "ramadan": [
+    { "id": "r1", "name": "মসুর ডাল (১ কেজি)", "price": 140, "image": "https://placehold.co/400x400?text=Lentils", "description": "দ্রুত সেদ্ধ হওয়া দেশি মসুর ডাল।" },
+    { "id": "r2", "name": "মাষকলাই ডাল (১ কেজি)", "price": 180, "image": "https://placehold.co/400x400?text=BlackGram", "description": "উন্নত মানের বাছাইকৃত মাষকলাই।" },
+    { "id": "r3", "name": "মুগ ডাল (১ কেজি)", "price": 160, "image": "https://placehold.co/400x400?text=MoongDal", "description": "সোনালী ভাজা সুগন্ধি মুগ ডাল।" },
+    { "id": "r4", "name": "খেজুর (জাহিদি)", "price": 280, "image": "https://placehold.co/400x400?text=Dates", "description": "৫০০ গ্রাম প্রিমিয়াম জাহিদি খেজুর।" },
+    { "id": "r5", "name": "বেসন (১ কেজি)", "price": 145, "image": "https://placehold.co/400x400?text=Besan", "description": "খাঁটি বুটের ডালের মিহি বেসন।" },
+    { "id": "r6", "name": "মুড়ি (৫০০ গ্রাম)", "price": 60, "image": "https://placehold.co/400x400?text=PuffedRice", "description": "ইউরিয়া মুক্ত মচমচে দেশি মুড়ি।" },
+    { "id": "r7", "name": "চিড়া (১ কেজি)", "price": 95, "image": "https://placehold.co/400x400?text=Chira", "description": "পরিষ্কার সাদা ও পাতলা চিড়া।" },
+    { "id": "r8", "name": "রুহ আফজা (৮০০ মিলি)", "price": 490, "image": "https://placehold.co/400x400?text=RoohAfza", "description": "হামদর্দ এর আসল শরবত-এ-আযম।" },
+    { "id": "r9", "name": "ট্যাং (৫০০ গ্রাম)", "price": 670, "image": "https://placehold.co/400x400?text=Tang", "description": "অরেঞ্জ ফ্লেভারের ইনস্ট্যান্ট ড্রিংক পাউডার।" },
+    { "id": "r10", "name": "ইসবগুলের ভুষি", "price": 220, "image": "https://placehold.co/400x400?text=Isabgul", "description": "১০০ গ্রাম প্যাকেটজাত বিশুদ্ধ ভুষি।" },
+    { "id": "r11", "name": "লাচ্ছা সেমাই", "price": 70, "image": "https://placehold.co/400x400?text=Semai", "description": "২০০ গ্রাম ঘিয়ে ভাজা মচমচে সেমাই।" },
+    { "id": "r12", "name": "টোকমা দানা", "price": 120, "image": "https://placehold.co/400x400?text=Tokma", "description": "১০০ গ্রাম পরিষ্কার টোকমা দানা।" },
+    { "id": "r13", "name": "মটর ডাল (১ কেজি)", "price": 110, "image": "https://placehold.co/400x400?text=Peas", "description": "পিঁয়াজুর জন্য উপযুক্ত মটর ডাল।" },
+    { "id": "r14", "name": "আগা আগা পাউডার", "price": 180, "image": "https://placehold.co/400x400?text=AgarAgar", "description": "পুডিং ও জেলি তৈরির জন্য উপযুক্ত।" },
+    { "id": "r15", "name": "কাসুন্দি (৩০০ গ্রাম)", "price": 130, "image": "https://placehold.co/400x400?text=Kasundi", "description": "ঝাল ও মুখরোচক খাঁটি সরিষার কাসুন্দি।" },
+    { "id": "r16", "name": "সাদা তিল (১০০ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Sesame", "description": "পিঠা ও রান্নায় ব্যবহারের জন্য ফ্রেশ তিল।" },
+    { "id": "r17", "name": "নুডলস (৮ প্যাক)", "price": 160, "image": "https://placehold.co/400x400?text=Noodles", "description": "ইনস্ট্যান্ট মশলাসহ এগ নুডলস।" },
+    { "id": "r18", "name": "মেথি (১০০ গ্রাম)", "price": 65, "image": "https://placehold.co/400x400?text=Fenugreek", "description": "পরিষ্কার আস্ত মেথি।" },
+    { "id": "r19", "name": "বিরিয়ানি মশলা", "price": 55, "image": "https://placehold.co/400x400?text=BiryaniMasala", "description": "৪০ গ্রাম রাঁধুনী বিরিয়ানি মশলা।" },
+    { "id": "r20", "name": "আচার (মিক্সড)", "price": 190, "image": "https://placehold.co/400x400?text=Pickle", "description": "৪০০ গ্রাম টক-ঝাল-মিষ্টি ঘরোয়া আচার।" },
+    { "id": "r21", "name": "সরিষার তেল (১ লি)", "price": 310, "image": "https://placehold.co/400x400?text=MustardOil", "description": "১০০% খাঁটি ও কড়া ঝাঁঝালো তেল।" },
+    { "id": "r22", "name": "কাবলি ছোলা (৫০০ গ্রাম)", "price": 140, "image": "https://placehold.co/400x400?text=Chickpeas", "description": "বড় দানার সাদা কাবলি ছোলা।" },
+    { "id": "r23", "name": "মিছরি (২৫০ গ্রাম)", "price": 75, "image": "https://placehold.co/400x400?text=CandySugar", "description": "শরবতে ব্যবহারের জন্য বড় দানার মিছরি।" }
+  ],
   "vegetables": [
     { "id": "v1", "name": "দেশি আলু", "price": 45, "image": "https://placehold.co/400x400?text=Potato", "description": "মাটি ছাড়া পরিষ্কার নতুন আলু।" },
     { "id": "v2", "name": "পেঁয়াজ", "price": 90, "image": "https://placehold.co/400x400?text=Onion", "description": "পাবনার ভালো মানের পেঁয়াজ।" },
@@ -73,7 +99,7 @@ const PRODUCTS_DATA: Record<string, Product[]> = {
     { "id": "c3", "name": "টয়লেট ক্লিনার", "price": 160, "image": "https://placehold.co/400x400?text=Clean", "description": "হারপিক ৫০০ মিলি।" },
     { "id": "c4", "name": "সাবান (লাক্স)", "price": 65, "image": "https://placehold.co/400x400?text=Soap", "description": "১০০ গ্রাম বিউটি সোপ।" }
   ],
-"personal_care": [
+"personal": [
     { "id": "pc1", "name": "লাক্স সাবান (১৫০ গ্রাম)", "price": 85, "image": "https://placehold.co/400x400?text=Lux+Soap", "description": "সফট স্কিন ও সুগন্ধি বিউটি সোপ।" },
     { "id": "pc2", "name": "ডেটল সাবান (১২৫ গ্রাম)", "price": 75, "image": "https://placehold.co/400x400?text=Dettol", "description": "জীবাণু নাশক এন্টিসেপটিক সাবান।" },
     { "id": "pc3", "name": "লাইফবয় হ্যান্ডওয়াশ (রিফিল)", "price": 85, "image": "https://placehold.co/400x400?text=Handwash", "description": "৯৯.৯% জীবাণু থেকে সুরক্ষা।" },
